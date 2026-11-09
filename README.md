@@ -1,4 +1,4 @@
-# 💼 Sistema de Faturamento Comercial — Cadastro e Controle de Estoque
+# Sistema de Faturamento Comercial — Cadastro e Controle de Estoque
 
 Aplicação Full Stack desenvolvida a partir de um exercício de Python sobre Programação Orientada a Objetos. O sistema permite cadastrar produtos, controlar entradas e saídas de estoque e calcular o valor total armazenado.
 
