@@ -16,7 +16,7 @@ As regras de negócio são protegidas no backend por meio de encapsulamento, `@p
 - Busca por nome e exclusão de produtos.
 - Persistência dos dados em arquivo JSON.
 
-## 📸 Demonstração Visual
+## Demonstração Visual
 
 ### Tela Inicial (Vazia)
 Aguardando o registro do produto com o seu nome, valor unitário e quantidade.
