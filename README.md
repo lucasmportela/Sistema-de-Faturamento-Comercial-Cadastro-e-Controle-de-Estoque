@@ -116,7 +116,7 @@ Frontend: `http://localhost:3000`
 
 > No PowerShell do Windows, use `npm.cmd` para evitar o bloqueio de execução do arquivo `npm.ps1`.
 
-## 🔒 Configuração de segurança
+##  Configuração de segurança
 
 - O CORS não aceita qualquer origem. Por padrão, somente `http://localhost:3000` e `http://127.0.0.1:3000` podem acessar a API por chamadas cross-origin.
 - Para autorizar outro endereço, defina `CORS_ORIGINS` com uma lista separada por vírgulas contendo apenas as origens confiáveis. Exemplo no PowerShell: `$env:CORS_ORIGINS = "https://meu-frontend.example.com"`.
