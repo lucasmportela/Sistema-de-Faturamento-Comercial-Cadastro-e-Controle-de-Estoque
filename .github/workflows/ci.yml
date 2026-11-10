@@ -33,7 +33,7 @@ jobs:
         run: python -m unittest discover -s backend/tests -v
 
   frontend:
-    name: Build React
+    name: Testes e build React
     runs-on: ubuntu-latest
 
     steps:
@@ -47,8 +47,12 @@ jobs:
 
       - name: Instalar dependências
         working-directory: frontend
-        run: npm install
+        run: npm install --no-audit --no-fund
 
-      - name: Gerar build
+      - name: Executar testes de interface
+        working-directory: frontend
+        run: npm test
+
+      - name: Gerar build de produção
         working-directory: frontend
         run: npm run build
