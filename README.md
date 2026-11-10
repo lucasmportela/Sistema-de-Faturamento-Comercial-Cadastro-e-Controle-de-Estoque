@@ -17,6 +17,16 @@ As regras de negócio ficam concentradas no backend, na classe `Produto`, enquan
 - Atualização e exclusão de produtos.
 - Persistência dos dados em arquivo JSON.
 
+## Demonstração online
+
+**[Acessar o Sistema de Faturamento](https://faturamento-comercial-demo.onrender.com)**
+
+A demonstração pública reúne o frontend React e a API Flask em um único serviço Docker no Render. Ela inicia com produtos fictícios de exemplo para facilitar a exploração do painel.
+
+> **Ambiente demonstrativo compartilhado:** visitantes podem cadastrar, movimentar e excluir os mesmos produtos. Não informe dados pessoais, financeiros ou comerciais reais. Os dados ficam no armazenamento efêmero do serviço e podem ser reiniciados em novos deploys ou reinicializações. No plano gratuito, o serviço pode entrar em suspensão após um período sem acessos; a primeira visita posterior pode demorar para responder.
+
+A aplicação não possui autenticação e não deve ser utilizada para operações comerciais reais.
+
 ## Demonstração visual
 
 ### Tela inicial
@@ -33,6 +43,7 @@ As regras de negócio ficam concentradas no backend, na classe `Produto`, enquan
 - Python 3.10 ou superior
 - Flask 3.1
 - Flask-CORS 5
+- Gunicorn para execução WSGI em produção
 - API REST
 - JSON para persistência local
 
@@ -43,11 +54,14 @@ As regras de negócio ficam concentradas no backend, na classe `Produto`, enquan
 - Vitest e React Testing Library para testes de interface
 - Babel
 - HTML5 e CSS3
+- Docker para empacotamento da aplicação
 
 ## Estrutura do projeto
 
 ```text
 Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque/
+├── Dockerfile
+├── .dockerignore
 ├── backend/
 │   ├── data/                 # dados JSON gerados localmente
 │   ├── tests/                # testes automatizados
@@ -167,6 +181,21 @@ Deixe também esse terminal aberto enquanto utilizar o sistema.
 
 > **Importante:** este frontend utiliza React com Webpack, não Vite. No PowerShell do Windows, prefira `npm.cmd` em vez de `npm` quando a política de execução bloquear o script `npm.ps1`.
 
+## Publicação e execução em produção
+
+O Dockerfile utiliza duas etapas: a primeira instala as dependências do React e gera o build Webpack; a segunda instala as dependências Python e executa o Flask com Gunicorn. Em produção, o Flask serve os arquivos compilados do React e as rotas da API pela mesma origem.
+
+O endpoint `GET /api/health` é utilizado para verificar a disponibilidade da API. A variável `DEMO_SEED_DATA=true` inicializa o catálogo com três produtos fictícios quando o armazenamento está vazio.
+
+Para reproduzir a imagem localmente, na raiz do repositório:
+
+```powershell
+docker build -t faturamento-comercial .
+docker run --rm -p 10000:10000 -e APP_ENV=production -e DEMO_SEED_DATA=true faturamento-comercial
+```
+
+Depois, acesse `http://localhost:10000`.
+
 ## Como funciona a integração entre frontend e backend
 
 A aplicação utiliza dois servidores durante o desenvolvimento:
@@ -272,7 +301,8 @@ O workflow `.github/workflows/ci.yml` é executado em pushes e pull requests dir
 - executa os testes com `python -m unittest discover -s backend/tests -v`;
 - instala as dependências do frontend;
 - executa os **7 testes de interface** com `npm test`;
-- gera o build de produção com `npm run build`.
+- gera o build de produção com `npm run build`;
+- constrói a imagem Docker de produção para validar o empacotamento do frontend e backend.
 
 Além dos testes de backend, o frontend possui **7 testes de interface** com Vitest e React Testing Library. A suíte cobre carregamento e indicadores do painel, tratamento de falha da API, cadastro de produto, limpeza do formulário, pesquisa, entrada de estoque e confirmação/cancelamento de exclusão. Somadas, as suítes de backend (10 testes) e frontend (7 testes) cobrem **17 cenários automatizados**.
 
@@ -298,7 +328,7 @@ Os arquivos otimizados serão gerados em `frontend/dist/`. Essa etapa gera os ar
 
 ### O endereço `http://127.0.0.1:5000/` mostra 404
 
-Esse comportamento é esperado: o Flask disponibiliza endpoints da API e não possui uma página inicial na rota `/`. Para verificar o backend, acesse:
+Esse comportamento é esperado no modo local: o Flask disponibiliza endpoints da API e a interface é servida pelo Webpack na porta 3000. Em produção, o Flask serve o build React na rota `/`. Para verificar o backend, acesse:
 
 `http://127.0.0.1:5000/api/health`
 

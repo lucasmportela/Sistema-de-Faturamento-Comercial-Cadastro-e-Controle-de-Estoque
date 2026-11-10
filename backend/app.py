@@ -1,6 +1,7 @@
 import os
+from pathlib import Path
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from produto import Produto
 from repositorio import RepositorioProdutos
@@ -15,6 +16,9 @@ DEBUG = (
 )
 app.config["DEBUG"] = DEBUG
 
+FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
+SERVE_FRONTEND = APP_ENV == "production" and (FRONTEND_DIST / "index.html").is_file()
+
 ALLOWED_ORIGINS = [
     origin.strip().rstrip("/")
     for origin in os.getenv(
@@ -27,6 +31,16 @@ CORS(app, resources={r"/api/*": {"origins": ALLOWED_ORIGINS}})
 
 repo = RepositorioProdutos()
 
+if (
+    APP_ENV == "production"
+    and os.getenv("DEMO_SEED_DATA", "false").strip().lower() in {"1", "true", "yes", "on"}
+    and not repo.listar()
+):
+    # Produtos fictícios para que a demonstração já abra com dados de exemplo.
+    repo.criar("Notebook", 3500.00, 8)
+    repo.criar("Mouse sem fio", 89.90, 20)
+    repo.criar("Monitor 24 polegadas", 799.90, 6)
+
 
 def resposta_produto(item):
     return {
@@ -37,6 +51,26 @@ def resposta_produto(item):
 
 def erro(mensagem, status=400):
     return jsonify({"erro": mensagem}), status
+
+
+@app.get("/")
+def pagina_inicial():
+    if SERVE_FRONTEND:
+        return send_from_directory(FRONTEND_DIST, "index.html")
+    return jsonify({"mensagem": "API de faturamento disponível em /api."}), 404
+
+
+@app.get("/<path:asset_path>")
+def arquivos_frontend(asset_path):
+    if not SERVE_FRONTEND or asset_path.startswith("api/"):
+        return erro("Rota não encontrada.", 404)
+
+    arquivo = FRONTEND_DIST / asset_path
+    if arquivo.is_file():
+        return send_from_directory(FRONTEND_DIST, asset_path)
+
+    # Mantém fallback para rotas do frontend, sem mascarar endpoints da API.
+    return send_from_directory(FRONTEND_DIST, "index.html")
 
 
 @app.get("/api/health")
