@@ -257,7 +257,7 @@ O arquivo é criado automaticamente pelo repositório caso ainda não exista. Ma
 O projeto utiliza `unittest` para executar os testes automatizados do backend. Na raiz do repositório, execute:
 
 ```powershell
-.\\backend\\.venv\\Scripts\\python.exe -m unittest discover -s backend/tests -v
+.\backend\.venv\Scripts\python.exe -m unittest discover -s backend/tests -v
 ```
 
 O workflow `.github/workflows/ci.yml` é executado em pushes e pull requests direcionados à branch `main`. Ele:
