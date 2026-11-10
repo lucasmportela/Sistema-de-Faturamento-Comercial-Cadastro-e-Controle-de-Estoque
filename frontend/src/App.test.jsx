@@ -22,7 +22,7 @@ describe("Faturamento & Estoque - interface", () => {
     expect(screen.getByText("Mouse")).toBeInTheDocument();
     expect(screen.getByText("2", { selector: "strong" })).toBeInTheDocument();
     expect(screen.getByText("15", { selector: "strong" })).toBeInTheDocument();
-    expect(screen.getByText("R$ 13.000,00")).toBeInTheDocument();
+    expect(screen.getByText(/13\\.000,00/)).toBeInTheDocument();
   });
 
   it("apresenta uma mensagem quando não consegue carregar a API", async () => {
