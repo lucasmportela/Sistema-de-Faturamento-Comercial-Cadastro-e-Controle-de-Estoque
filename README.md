@@ -1,44 +1,55 @@
 # Sistema de Faturamento Comercial — Cadastro e Controle de Estoque
 
-Aplicação Full Stack desenvolvida a partir de um exercício de Python sobre Programação Orientada a Objetos. O sistema permite cadastrar produtos, controlar entradas e saídas de estoque e calcular o valor total armazenado.
+Aplicação web full stack para cadastro e gerenciamento de produtos, controle de movimentações de estoque e acompanhamento do valor armazenado. O projeto utiliza **Python e Flask** no backend e **React 18 com Webpack** no frontend.
 
-As regras de negócio são protegidas no backend por meio de encapsulamento, `@property` e setters da classe `Produto`.
+As regras de negócio ficam concentradas no backend, na classe `Produto`, enquanto a interface React consome uma API REST para cadastrar, consultar e movimentar os produtos.
 
 ## Funcionalidades
 
-- Cadastro e consulta de produtos.
-- Validação de preço maior que zero.
-- Validação de quantidade inteira e não negativa.
-- Entrada de estoque.
-- Saída de estoque com verificação de saldo.
-- Cálculo do valor total por produto (`preço × quantidade`).
+- Cadastro de produtos com nome, preço unitário e quantidade inicial.
+- Listagem e pesquisa de produtos pelo nome.
+- Exibição da quantidade de tipos de produtos e unidades em estoque.
+- Cálculo do valor em estoque por produto (`preço unitário × quantidade`).
 - Cálculo do valor total de todo o estoque.
-- Busca por nome e exclusão de produtos.
+- Entrada e saída de estoque.
+- Validação de preço e quantidade.
+- Bloqueio de saída quando não há saldo suficiente.
+- Atualização e exclusão de produtos.
 - Persistência dos dados em arquivo JSON.
 
-## Demonstração Visual
+## Demonstração visual
 
-### Tela Inicial (Vazia)
-Aguardando o registro do produto com o seu nome, valor unitário e quantidade.
+### Tela inicial
+
 ![Tela Inicial](docs/screenshots/tela-inicial.png)
 
-### Tela Registro
-Contém a quantidade de tipos de produtos, unidades e valor total de estoque. Registro dos produtos cadastrados contendo um catálogo com preço, estoque e valor total em estoque. Com opções de adicionar, subtrair ou excluir os produtos cadastrados.
+### Tela de registro e controle de estoque
+
 ![Registro](docs/screenshots/tela-registro.png)
 
-Os dados cadastrados são gravados em `backend/data/produtos.json`, criado automaticamente na primeira execução. Esse arquivo contém dados locais e não é enviado ao repositório individual.
+## Tecnologias utilizadas
 
-## Tecnologias
+### Backend
+- Python 3.10 ou superior
+- Flask 3.1
+- Flask-CORS 5
+- API REST
+- JSON para persistência local
 
-**Backend:** Python, Flask, Flask-CORS, JSON.  
-**Frontend:** React, JavaScript, Webpack, Babel, HTML e CSS.
+### Frontend
+- React 18
+- JavaScript
+- Webpack 5 e webpack-dev-server
+- Babel
+- HTML5 e CSS3
 
-## Estrutura
+## Estrutura do projeto
 
 ```text
 Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque/
 ├── backend/
-│   ├── data/                # criado automaticamente pelo backend
+│   ├── data/                 # dados JSON gerados localmente
+│   ├── tests/                # testes automatizados
 │   ├── app.py
 │   ├── produto.py
 │   ├── repositorio.py
@@ -52,41 +63,57 @@ Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque/
 │   │   └── style.css
 │   ├── package.json
 │   └── webpack.config.js
-├── .gitignore
+├── docs/
+│   └── screenshots/
+├── .github/
+│   └── workflows/
 └── README.md
 ```
 
-## Regras de negócio
+Pastas geradas localmente, como `backend/.venv/`, `frontend/node_modules/` e `frontend/dist/`, não precisam ser versionadas no Git.
 
-- `Produto(nome, preco, quantidade=0)` inicializa o objeto validando os atributos pelas propriedades.
-- `preco` é armazenado em `_preco` e só aceita valor maior que zero.
-- `quantidade` é armazenada em `_quantidade` e só aceita inteiro não negativo.
-- `valor_total_estoque` é uma propriedade somente-leitura que calcula preço × quantidade.
-- `adicionar_estoque(quantidade)` retorna `True` quando adiciona uma quantidade inteira positiva.
-- `remover_estoque(quantidade)` retorna `True` somente quando a quantidade é válida e existe saldo suficiente.
+## Pré-requisitos
 
-## Como executar
+Instale os seguintes programas:
 
-### Pré-requisitos
+- [Python 3.10 ou superior](https://www.python.org/downloads/)
+- [Node.js LTS](https://nodejs.org/) — a instalação inclui o npm
+- [Git](https://git-scm.com/) (opcional, para clonar o repositório)
 
-- Python 3.10 ou superior
-- Node.js e npm
+Confira as instalações no PowerShell:
+
+```powershell
+python --version
+node -v
+npm.cmd -v
+```
+
+## Como executar no Windows
+
+O backend e o frontend são iniciados separadamente. Mantenha **dois terminais PowerShell abertos**.
 
 ### 1. Clonar o repositório
 
-```bash
+```powershell
 git clone https://github.com/lucasmportela/Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque.git
 cd Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque
 ```
 
-### 2. Iniciar o backend
+### 2. Preparar e iniciar o backend
 
-No terminal:
+No primeiro terminal, entre na pasta `backend`:
 
 ```powershell
 cd backend
+```
+
+Crie o ambiente virtual (se ele ainda não existir):
+
+```powershell
 py -m venv .venv
 ```
+
+Se o comando `py` não estiver disponível, use `python -m venv .venv`.
 
 Instale as dependências:
 
@@ -100,43 +127,76 @@ Inicie a API:
 .\.venv\Scripts\python.exe app.py
 ```
 
-Backend: `http://127.0.0.1:5000`
+O backend ficará disponível em:
 
-### 3. Iniciar o frontend
+- API: `http://127.0.0.1:5000`
+- Verificação de funcionamento: `http://127.0.0.1:5000/api/health`
 
-Abra um segundo terminal:
+Deixe esse terminal aberto enquanto utilizar o sistema.
+
+### 3. Instalar e iniciar o frontend
+
+Abra um **segundo terminal PowerShell** e entre na pasta `frontend`, a partir da raiz do projeto:
 
 ```powershell
 cd frontend
+```
+
+Instale as dependências do React e do Webpack:
+
+```powershell
 npm.cmd install
+```
+
+Inicie o servidor de desenvolvimento:
+
+```powershell
 npm.cmd start
 ```
 
-Frontend: `http://localhost:3000`
+O Webpack está configurado para abrir o navegador automaticamente. A interface ficará disponível em:
 
-> No PowerShell do Windows, use `npm.cmd` para evitar o bloqueio de execução do arquivo `npm.ps1`.
+**http://localhost:3000**
 
-##  Configuração de segurança
+Deixe também esse terminal aberto enquanto utilizar o sistema.
 
-- O CORS não aceita qualquer origem. Por padrão, somente `http://localhost:3000` e `http://127.0.0.1:3000` podem acessar a API por chamadas cross-origin.
-- Para autorizar outro endereço, defina `CORS_ORIGINS` com uma lista separada por vírgulas contendo apenas as origens confiáveis. Exemplo no PowerShell: `$env:CORS_ORIGINS = "https://meu-frontend.example.com"`.
-- O modo Debug fica desativado por padrão. `FLASK_DEBUG=true` só deve ser usado em desenvolvimento local; quando `APP_ENV=production`, o Debug permanece desligado.
-- O servidor de desenvolvimento escuta em `127.0.0.1` por padrão. Em produção, use um servidor WSGI apropriado e configure HTTPS, domínio e origens CORS explicitamente.
-- O frontend local utiliza o proxy do Webpack para encaminhar `/api` ao backend; por isso, durante esse fluxo, o navegador normalmente faz requisições same-origin.
+> **Importante:** este frontend utiliza React com Webpack, não Vite. No PowerShell do Windows, prefira `npm.cmd` em vez de `npm` quando a política de execução bloquear o script `npm.ps1`.
+
+## Como funciona a integração entre frontend e backend
+
+A aplicação utiliza dois servidores durante o desenvolvimento:
+
+| Parte | Endereço | Responsabilidade |
+|---|---|---|
+| Frontend React + Webpack | `http://localhost:3000` | Interface visual do sistema |
+| Backend Flask | `http://127.0.0.1:5000` | API e regras de negócio |
+
+O arquivo `frontend/webpack.config.js` configura o servidor de desenvolvimento na porta **3000** e encaminha as requisições que começam com `/api` para `http://127.0.0.1:5000`. Por isso, o frontend utiliza caminhos relativos, como `/api/produtos`, e não precisa acessar diretamente a porta 5000 pelo navegador.
+
+O backend configura o CORS para aceitar, por padrão, as origens locais `http://localhost:3000` e `http://127.0.0.1:3000`. Se você alterar a porta do frontend ou acessar a API diretamente de outra origem, configure a variável de ambiente `CORS_ORIGINS` antes de iniciar o Flask.
+
+Exemplo no PowerShell para autorizar outro endereço de frontend:
+
+```powershell
+$env:CORS_ORIGINS = "http://localhost:8080,http://127.0.0.1:8080"
+.\.venv\Scripts\python.exe app.py
+```
+
+Use somente origens confiáveis. Com a configuração padrão do Webpack, não é necessário trocar a porta 3000.
 
 ## Endpoints da API
 
 | Método | Rota | Descrição |
 |---|---|---|
-| GET | `/api/health` | Verifica o status da API |
-| GET | `/api/produtos` | Lista produtos e valor total do estoque |
-| POST | `/api/produtos` | Cadastra produto |
-| PUT | `/api/produtos/<id>` | Atualiza produto |
-| DELETE | `/api/produtos/<id>` | Exclui produto |
-| POST | `/api/produtos/<id>/estoque/adicionar` | Adiciona estoque |
-| POST | `/api/produtos/<id>/estoque/remover` | Remove estoque |
+| `GET` | `/api/health` | Verifica se a API está ativa |
+| `GET` | `/api/produtos` | Lista os produtos e o valor total do estoque |
+| `POST` | `/api/produtos` | Cadastra um produto |
+| `PUT` | `/api/produtos/<id>` | Atualiza os dados de um produto |
+| `DELETE` | `/api/produtos/<id>` | Exclui um produto |
+| `POST` | `/api/produtos/<id>/estoque/adicionar` | Registra entrada de estoque |
+| `POST` | `/api/produtos/<id>/estoque/remover` | Registra saída de estoque |
 
-### Exemplo de cadastro
+### Exemplo: cadastrar produto
 
 `POST /api/produtos`
 
@@ -148,7 +208,17 @@ Frontend: `http://localhost:3000`
 }
 ```
 
-### Exemplo de movimentação
+### Exemplo: adicionar estoque
+
+`POST /api/produtos/1/estoque/adicionar`
+
+```json
+{
+  "quantidade": 5
+}
+```
+
+### Exemplo: remover estoque
 
 `POST /api/produtos/1/estoque/remover`
 
@@ -158,29 +228,93 @@ Frontend: `http://localhost:3000`
 }
 ```
 
-## Testes automatizados
+A rota `GET /api/produtos` retorna a lista de produtos e o valor total do estoque em formato JSON.
 
-Os testes usam `unittest` e o cliente de testes do Flask. A API utiliza um arquivo JSON temporário por teste, evitando alterar os dados locais do projeto.
+## Regras de negócio
 
-Execute na raiz do projeto:
+- O nome do produto é obrigatório.
+- O preço deve ser um número maior que zero.
+- A quantidade inicial deve ser um número inteiro não negativo.
+- Entradas e saídas de estoque devem utilizar quantidades inteiras maiores que zero.
+- A saída não pode ultrapassar a quantidade disponível.
+- O valor em estoque de cada produto é calculado por `preço × quantidade`.
+- O valor total do estoque corresponde à soma dos valores em estoque de todos os produtos.
 
-```bash
-python -m unittest discover -s backend/tests -v
+A classe `Produto` aplica as validações por meio de propriedades (`@property` e `@setter`) e métodos de movimentação de estoque.
+
+## Persistência dos dados
+
+Os produtos são armazenados localmente em:
+
+```text
+backend/data/produtos.json
 ```
 
-A suíte verifica a configuração de segurança e as rotas de saúde, cadastro, listagem, validação, movimentação de estoque, atualização, exclusão e persistência. O GitHub Actions executa os testes, a verificação de sintaxe Python e o build do frontend.
+O arquivo é criado automaticamente pelo repositório caso ainda não exista. Mantenha esse arquivo para preservar os cadastros locais e faça cópias de segurança antes de alterações manuais. Os dados de execução local não devem ser confundidos com os arquivos versionados no Git.
+
+## Testes automatizados
+
+Os testes utilizam `unittest` e o cliente de testes do Flask. A API utiliza um arquivo JSON temporário durante os testes para evitar alterações nos dados locais.
+
+Na raiz do projeto, execute:
+
+```powershell
+.\backend\.venv\Scripts\python.exe -m unittest discover -s backend/tests -v
+```
+
+A suíte verifica as regras de negócio e as rotas da API. O GitHub Actions também executa verificações automatizadas do projeto.
+
+## Gerar a versão de produção do frontend
+
+Na pasta `frontend`, execute:
+
+```powershell
+npm.cmd run build
+```
+
+Os arquivos otimizados serão gerados em `frontend/dist/`. Essa etapa gera os arquivos do frontend; ela não inicia o backend Flask.
+
+## Solução de problemas
+
+### O endereço `http://127.0.0.1:5000/` mostra 404
+
+Esse comportamento é esperado: o Flask disponibiliza endpoints da API e não possui uma página inicial na rota `/`. Para verificar o backend, acesse:
+
+`http://127.0.0.1:5000/api/health`
+
+Para abrir a interface visual, inicie os dois servidores e acesse **http://localhost:3000**.
+
+### O comando `npm.cmd` não é reconhecido
+
+Verifique se o Node.js e o npm estão instalados:
+
+```powershell
+node -v
+where.exe node
+where.exe npm
+```
+
+Se o Node.js não estiver instalado, instale a versão LTS pelo [site oficial](https://nodejs.org/). Se acabou de instalar, feche e abra novamente o PowerShell para atualizar o PATH do Windows. Se `node -v` funcionar, mas `npm.cmd` não for encontrado, confira se a pasta de instalação do Node.js está no PATH.
+
+### O navegador não consegue se conectar à API
+
+- Confirme se o backend está ativo no primeiro terminal.
+- Confirme se o frontend está ativo no segundo terminal.
+- Teste `http://127.0.0.1:5000/api/health`.
+- Confira se o proxy `/api` do `frontend/webpack.config.js` aponta para `http://127.0.0.1:5000`.
+- Se alterou a porta ou removeu o proxy, revise a variável `CORS_ORIGINS` no backend.
 
 ## Conceitos praticados
 
 - Classes e objetos.
 - Encapsulamento e atributos protegidos.
 - Decoradores `@property` e `@setter`.
-- Propriedades somente-leitura.
 - Validação e tratamento de erros.
 - Métodos de instância.
 - Criação de API REST.
-- Integração frontend/backend.
-- Persistência em JSON.
+- Integração entre frontend e backend.
+- Persistência de dados em JSON.
+- Testes automatizados e integração contínua.
 
 ## Autor
 
