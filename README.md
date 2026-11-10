@@ -252,17 +252,20 @@ backend/data/produtos.json
 
 O arquivo é criado automaticamente pelo repositório caso ainda não exista. Mantenha esse arquivo para preservar os cadastros locais e faça cópias de segurança antes de alterações manuais. Os dados de execução local não devem ser confundidos com os arquivos versionados no Git.
 
-## Testes automatizados
+## Testes e integração contínua
 
-Os testes utilizam `unittest` e o cliente de testes do Flask. A API utiliza um arquivo JSON temporário durante os testes para evitar alterações nos dados locais.
-
-Na raiz do projeto, execute:
+O projeto utiliza `unittest` para executar os testes automatizados do backend. Na raiz do repositório, execute:
 
 ```powershell
-.\backend\.venv\Scripts\python.exe -m unittest discover -s backend/tests -v
+.\\backend\\.venv\\Scripts\\python.exe -m unittest discover -s backend/tests -v
 ```
 
-A suíte verifica as regras de negócio e as rotas da API. O GitHub Actions também executa verificações automatizadas do projeto.
+O workflow `.github/workflows/ci.yml` é executado em pushes e pull requests direcionados à branch `main`. Ele:
+
+- instala as dependências Python;
+- verifica a sintaxe do backend com `python -m compileall -q backend`;
+- executa os testes com `python -m unittest discover -s backend/tests -v`;
+- instala as dependências do frontend e executa o build de produção com `npm run build`.
 
 ## Gerar a versão de produção do frontend
 
