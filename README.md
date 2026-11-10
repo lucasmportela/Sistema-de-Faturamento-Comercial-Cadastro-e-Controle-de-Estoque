@@ -40,6 +40,7 @@ As regras de negócio ficam concentradas no backend, na classe `Produto`, enquan
 - React 18
 - JavaScript
 - Webpack 5 e webpack-dev-server
+- Vitest e React Testing Library para testes de interface
 - Babel
 - HTML5 e CSS3
 
@@ -59,9 +60,13 @@ Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque/
 │   │   └── index.html
 │   ├── src/
 │   │   ├── App.jsx
+│   │   ├── App.test.jsx
 │   │   ├── index.jsx
-│   │   └── style.css
+│   │   ├── style.css
+│   │   └── test/
+│   │       └── setup.js
 │   ├── package.json
+│   ├── vitest.config.mjs
 │   └── webpack.config.js
 ├── docs/
 │   └── screenshots/
@@ -265,7 +270,19 @@ O workflow `.github/workflows/ci.yml` é executado em pushes e pull requests dir
 - instala as dependências Python;
 - verifica a sintaxe do backend com `python -m compileall -q backend`;
 - executa os testes com `python -m unittest discover -s backend/tests -v`;
-- instala as dependências do frontend e executa o build de produção com `npm run build`.
+- instala as dependências do frontend;
+- executa os **7 testes de interface** com `npm test`;
+- gera o build de produção com `npm run build`.
+
+Além dos testes de backend, o frontend possui **7 testes de interface** com Vitest e React Testing Library. A suíte cobre carregamento e indicadores do painel, tratamento de falha da API, cadastro de produto, limpeza do formulário, pesquisa, entrada de estoque e confirmação/cancelamento de exclusão. Somadas, as suítes de backend (10 testes) e frontend (7 testes) cobrem **17 cenários automatizados**.
+
+Para executar os testes de interface no PowerShell, a partir da raiz:
+
+```powershell
+cd frontend
+npm.cmd install
+npm.cmd test
+```
 
 ## Gerar a versão de produção do frontend
 
