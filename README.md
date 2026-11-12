@@ -267,14 +267,14 @@ A rota `GET /api/produtos` retorna a lista de produtos e o valor total do estoqu
 ## Regras de negócio
 
 - O nome do produto é obrigatório.
-- O preço deve ser um número maior que zero.
+- O preço deve ser maior que zero e é normalizado para duas casas decimais com `Decimal` e arredondamento `ROUND_HALF_UP`.
 - A quantidade inicial deve ser um número inteiro não negativo.
 - Entradas e saídas de estoque devem utilizar quantidades inteiras maiores que zero.
 - A saída não pode ultrapassar a quantidade disponível.
-- O valor em estoque de cada produto é calculado por `preço × quantidade`.
+- O valor em estoque de cada produto é calculado com `Decimal`, por `preço × quantidade`.
 - O valor total do estoque corresponde à soma dos valores em estoque de todos os produtos.
 
-A classe `Produto` aplica as validações por meio de propriedades (`@property` e `@setter`) e métodos de movimentação de estoque.
+A classe `Produto` aplica as validações por meio de propriedades (`@property` e `@setter`) e métodos de movimentação de estoque. Os preços são persistidos como texto decimal com duas casas no JSON para preservar os centavos; a API mantém os campos monetários como números JSON na resposta.
 
 ## Persistência dos dados
 
