@@ -1,5 +1,7 @@
 # Sistema de Faturamento Comercial — Cadastro e Controle de Estoque
 
+[![CI](https://github.com/lucasmportela/Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque/actions/workflows/ci.yml/badge.svg)](https://github.com/lucasmportela/Sistema-de-Faturamento-Comercial-Cadastro-e-Controle-de-Estoque/actions/workflows/ci.yml)
+
 Aplicação web full stack para cadastro e gerenciamento de produtos, controle de movimentações de estoque e acompanhamento do valor armazenado. O projeto utiliza **Python e Flask** no backend e **React 18 com Webpack** no frontend.
 
 As regras de negócio ficam concentradas no backend, na classe `Produto`, enquanto a interface React consome uma API REST para cadastrar, consultar e movimentar os produtos.
