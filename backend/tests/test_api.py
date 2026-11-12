@@ -64,6 +64,8 @@ class TestBillingAPI(unittest.TestCase):
             {"nome": "Mouse", "preco": -1, "quantidade": 1},
             {"nome": "Mouse", "preco": 10, "quantidade": -1},
             {"nome": "Mouse", "preco": 10, "quantidade": 1.5},
+            {"nome": "Mouse", "preco": "NaN", "quantidade": 1},
+            {"nome": "Mouse", "preco": "Infinity", "quantidade": 1},
         ]
         for dados in casos:
             with self.subTest(dados=dados):
@@ -72,6 +74,33 @@ class TestBillingAPI(unittest.TestCase):
                 self.assertIn("erro", response.get_json())
 
         self.assertEqual(self.client.get("/api/produtos").get_json()["produtos"], [])
+
+    def test_calculos_monetarios_com_decimal_nao_acumulam_erros_de_float(self):
+        primeiro = self.criar_produto("Item A", preco="0.10", quantidade=3)
+        segundo = self.criar_produto("Item B", preco="0.20", quantidade=3)
+
+        self.assertEqual(primeiro["valor_total_estoque"], 0.30)
+        self.assertEqual(segundo["valor_total_estoque"], 0.60)
+
+        resposta = self.client.get("/api/produtos").get_json()
+        self.assertEqual(resposta["valor_total_estoque"], 0.90)
+
+        persistidos = json.loads(
+            Path(app_module.repo.arquivo).read_text(encoding="utf-8")
+        )
+        self.assertEqual(persistidos[0]["preco"], "0.10")
+        self.assertEqual(persistidos[1]["preco"], "0.20")
+
+    def test_preco_com_mais_de_duas_casas_e_arredondado_para_centavos(self):
+        produto = self.criar_produto(preco="1.005", quantidade=2)
+
+        self.assertEqual(produto["preco"], 1.01)
+        self.assertEqual(produto["valor_total_estoque"], 2.02)
+
+        persistido = json.loads(
+            Path(app_module.repo.arquivo).read_text(encoding="utf-8")
+        )[0]
+        self.assertEqual(persistido["preco"], "1.01")
 
     def test_adicionar_e_remover_estoque_atualiza_persistencia(self):
         produto = self.criar_produto(quantidade=5)

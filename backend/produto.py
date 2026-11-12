@@ -1,3 +1,9 @@
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+
+
+CENTAVO = Decimal("0.01")
+
+
 class Produto:
     def __init__(self, nome, preco, quantidade=0):
         self.nome = nome
@@ -10,9 +16,17 @@ class Produto:
 
     @preco.setter
     def preco(self, preco):
-        valor = float(preco)
-        if valor <= 0:
+        try:
+            valor = Decimal(str(preco)).quantize(
+                CENTAVO,
+                rounding=ROUND_HALF_UP,
+            )
+        except (InvalidOperation, TypeError, ValueError):
+            raise ValueError("Preço deve ser um valor monetário válido!")
+
+        if not valor.is_finite() or valor <= 0:
             raise ValueError("Preço tem que ser maior que zero!")
+
         self._preco = valor
 
     @property
@@ -28,7 +42,10 @@ class Produto:
 
     @property
     def valor_total_estoque(self):
-        return self._preco * self._quantidade
+        return (self._preco * self._quantidade).quantize(
+            CENTAVO,
+            rounding=ROUND_HALF_UP,
+        )
 
     def adicionar_estoque(self, quantidade):
         try:

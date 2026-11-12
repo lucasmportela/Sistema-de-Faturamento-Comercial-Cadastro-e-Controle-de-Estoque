@@ -304,7 +304,7 @@ O workflow `.github/workflows/ci.yml` é executado em pushes e pull requests dir
 - gera o build de produção com `npm run build`;
 - constrói a imagem Docker de produção para validar o empacotamento do frontend e backend.
 
-Além dos testes de backend, o frontend possui **7 testes de interface** com Vitest e React Testing Library. A suíte cobre carregamento e indicadores do painel, tratamento de falha da API, cadastro de produto, limpeza do formulário, pesquisa, entrada de estoque e confirmação/cancelamento de exclusão. Somadas, as suítes de backend (10 testes) e frontend (7 testes) cobrem **17 cenários automatizados**.
+A suíte de backend possui **12 testes automatizados**. Além dela, o frontend possui **7 testes de interface** com Vitest e React Testing Library. A suíte cobre carregamento e indicadores do painel, tratamento de falha da API, cadastro de produto, limpeza do formulário, pesquisa, entrada de estoque e confirmação/cancelamento de exclusão. Somadas, as suítes de backend (12 testes) e frontend (7 testes) cobrem **19 cenários automatizados**.
 
 Para executar os testes de interface no PowerShell, a partir da raiz:
 

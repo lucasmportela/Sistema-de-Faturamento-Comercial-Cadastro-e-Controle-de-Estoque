@@ -1,4 +1,5 @@
 import os
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -29,6 +30,7 @@ ALLOWED_ORIGINS = [
 ]
 CORS(app, resources={r"/api/*": {"origins": ALLOWED_ORIGINS}})
 
+CENTAVO = Decimal("0.01")
 repo = RepositorioProdutos()
 
 if (
@@ -42,10 +44,26 @@ if (
     repo.criar("Monitor 24 polegadas", 799.90, 6)
 
 
+def valor_estoque_decimal(item):
+    preco = Decimal(str(item["preco"]))
+    return (preco * int(item["quantidade"])).quantize(
+        CENTAVO,
+        rounding=ROUND_HALF_UP,
+    )
+
+
 def resposta_produto(item):
+    preco = Decimal(str(item["preco"])).quantize(
+        CENTAVO,
+        rounding=ROUND_HALF_UP,
+    )
+    total = valor_estoque_decimal(item)
+
+    # A conversão para float acontece somente na fronteira JSON da API.
     return {
         **item,
-        "valor_total_estoque": round(item["preco"] * item["quantidade"], 2)
+        "preco": float(preco),
+        "valor_total_estoque": float(total),
     }
 
 
@@ -80,10 +98,15 @@ def health():
 
 @app.get("/api/produtos")
 def listar():
-    produtos = [resposta_produto(p) for p in repo.listar()]
+    itens = repo.listar()
+    produtos = [resposta_produto(item) for item in itens]
+    total = sum(
+        (valor_estoque_decimal(item) for item in itens),
+        Decimal("0.00"),
+    )
     return jsonify({
         "produtos": produtos,
-        "valor_total_estoque": round(sum(p["valor_total_estoque"] for p in produtos), 2)
+        "valor_total_estoque": float(total.quantize(CENTAVO, rounding=ROUND_HALF_UP)),
     })
 
 
